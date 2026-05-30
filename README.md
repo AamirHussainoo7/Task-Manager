@@ -13,7 +13,7 @@ A production-quality Kanban-style task management application built with Django,
 | Service | URL |
 |---------|-----|
 | **Frontend (Vercel)** | [https://task-manager-teal-seven.vercel.app](https://task-manager-teal-seven.vercel.app) |
-| **Backend API (Render)** | [https://task-manager-kz1c.onrender.com](https://task-manager-kz1c.onrender.com) |
+| **Backend API (Render)** | [https://task-manager-kz1c.onrender.com](https://task-manager-kz1c.onrender.com/api/auth/register/) |
 
 > **Note:** The backend is hosted on Render's free tier and may take ~30-60 seconds to wake up on the first request after inactivity.
 
