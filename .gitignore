@@ -1,0 +1,25 @@
+# Python
+*.pyc
+__pycache__/
+backend/venv/
+*.egg-info/
+
+# Environment
+.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Django
+staticfiles/
