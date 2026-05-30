@@ -8,6 +8,16 @@ A production-quality Kanban-style task management application built with Django,
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql)
 ![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat-square&logo=tailwindcss)
 
+## 🌐 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend (Vercel)** | [https://task-manager-teal-seven.vercel.app](https://task-manager-teal-seven.vercel.app) |
+| **Backend API (Render)** | [https://task-manager-kz1c.onrender.com](https://task-manager-kz1c.onrender.com) |
+| **Django Admin** | [https://task-manager-kz1c.onrender.com/admin/](https://task-manager-kz1c.onrender.com/admin/) |
+
+> **Note:** The backend is hosted on Render's free tier and may take ~30-60 seconds to wake up on the first request after inactivity.
+
 ---
 
 ## Features
@@ -180,12 +190,15 @@ Navigate to `http://localhost:5173`
 | `SECRET_KEY` | Django secret key | — |
 | `DEBUG` | Debug mode | `True` |
 | `ALLOWED_HOSTS` | Allowed hosts (CSV) | `localhost,127.0.0.1` |
-| `DB_NAME` | PostgreSQL database name | `taskmanager_db` |
-| `DB_USER` | Database user | `postgres` |
-| `DB_PASSWORD` | Database password | `postgres` |
-| `DB_HOST` | Database host | `localhost` |
-| `DB_PORT` | Database port | `5432` |
+| `DATABASE_URL` | PostgreSQL connection string (production) | — |
+| `DB_NAME` | PostgreSQL database name (local dev) | `taskmanager_db` |
+| `DB_USER` | Database user (local dev) | `postgres` |
+| `DB_PASSWORD` | Database password (local dev) | `postgres` |
+| `DB_HOST` | Database host (local dev) | `localhost` |
+| `DB_PORT` | Database port (local dev) | `5432` |
 | `CORS_ALLOWED_ORIGINS` | Allowed CORS origins (CSV) | `http://localhost:5173` |
+
+> When `DATABASE_URL` is set (production), it takes precedence over individual `DB_*` variables. In local development, leave `DATABASE_URL` unset and use the `DB_*` variables instead.
 
 ### Frontend (`frontend/.env`)
 | Variable | Description | Default |
@@ -279,33 +292,42 @@ Navigate to `http://localhost:5173`
 
 ## Deployment
 
+The application is deployed as a **monorepo** with the frontend and backend deployed separately:
+
 ### Frontend → Vercel
 
-1. Push the `frontend/` directory to a GitHub repository
-2. Connect the repo to Vercel
-3. Set the root directory to `frontend`
-4. Add environment variable: `VITE_API_URL` = your backend URL
-5. Deploy
+1. Import the GitHub repository on [Vercel](https://vercel.com)
+2. Set the **Root Directory** to `frontend`
+3. Framework preset: **Vite** (auto-detected)
+4. Add environment variable:
+   - `VITE_API_URL` = `https://task-manager-kz1c.onrender.com`
+5. Deploy — Vercel handles `npm run build` automatically
 
 ### Backend → Render
 
-1. Push the `backend/` directory to a GitHub repository
-2. Create a new Web Service on Render
-3. Set the root directory to `backend`
+1. Create a **Web Service** on [Render](https://render.com) from the same GitHub repo
+2. Set the **Root Directory** to `backend`
+3. Runtime: **Python 3**
 4. Build command: `./build.sh`
 5. Start command: `gunicorn config.wsgi:application`
 6. Add environment variables:
-   - `SECRET_KEY` — a strong random string
-   - `DEBUG` — `False`
-   - `ALLOWED_HOSTS` — your Render domain
-   - `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` — from your PostgreSQL provider
-   - `CORS_ALLOWED_ORIGINS` — your Vercel frontend URL
 
-### Database → Neon / Supabase
+| Key | Value |
+|-----|-------|
+| `SECRET_KEY` | A strong random string |
+| `DEBUG` | `False` |
+| `ALLOWED_HOSTS` | `task-manager-kz1c.onrender.com,.onrender.com` |
+| `DATABASE_URL` | PostgreSQL connection string from Neon |
+| `CORS_ALLOWED_ORIGINS` | `https://task-manager-teal-seven.vercel.app` |
+| `PYTHON_VERSION` | `3.12.0` |
 
-1. Create a PostgreSQL instance on [Neon](https://neon.tech) or [Supabase](https://supabase.com)
-2. Copy the connection credentials
-3. Set them as environment variables in your Render backend
+### Database → Neon (Free PostgreSQL)
+
+1. Create a free PostgreSQL database on [Neon](https://neon.tech)
+2. Copy the connection string (e.g., `postgresql://user:pass@host/db?sslmode=require`)
+3. Set it as the `DATABASE_URL` environment variable on Render
+
+> **Why Neon instead of Render PostgreSQL?** Render's free tier limits you to one PostgreSQL database. Neon provides a free-tier PostgreSQL with 0.5 GB storage and is purpose-built for serverless workloads.
 
 ---
 
